@@ -1,4 +1,5 @@
 # gan_1D.py
+import random
 import numpy as np
 import matplotlib.pyplot as plt
 import src.activaciones as act
@@ -10,18 +11,24 @@ from src.costos import mapa_costos
 from src.optimizadores import mapa_optimizadores
 from core.discriminador import discriminador
 
+# Semilla para reproducibilidad y resultados estables
+SEED = 42
+np.random.seed(SEED)
+random.seed(SEED)
+
 # Parámetros generales
-ruido_dim = 10
+ruido_dim = 32
 salida_dim = 200
-tamano_lote = 64
-epocas = 200
+tamano_lote = 128
+epocas = 400
 
 # Configuración del generador
 gen_config = {
     'input': ruido_dim,
-    'capas_ocultas': [64, 32, salida_dim],
+    'capas_ocultas': [128, 128, salida_dim],
     'activaciones': ['relu', 'relu', 'lineal'],
-    'lr': 0.002,
+    'lr': 0.001,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }
@@ -29,9 +36,10 @@ gen_config = {
 # Configuración del discriminador
 disc_config = {
     'input': salida_dim,
-    'capas_ocultas': [64, 32, 1],
-    'activaciones': ['relu', 'relu', 'tanh'],
-    'lr': 0.002,
+    'capas_ocultas': [128, 64, 1],
+    'activaciones': ['relu', 'relu', 'sigmoide'],
+    'lr': 0.0008,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }
