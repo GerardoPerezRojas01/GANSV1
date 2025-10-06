@@ -1,4 +1,5 @@
 # gan_3D.py
+import random
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -6,6 +7,11 @@ from src.red_neuronal import inicializar_RNA
 from src.activaciones import mapa_activaciones
 from core.entrenamiento_gan import entrenar_gan
 from core.generador import generador
+
+# Semilla fija para reproducir los volúmenes generados
+SEED = 42
+np.random.seed(SEED)
+random.seed(SEED)
 
 # Datos 3D reales: esfera con ruido
 def generar_datos_3D(n):
@@ -19,25 +25,27 @@ def generar_datos_3D(n):
     return np.vstack([x, y, z]).T
 
 # Parámetros
-ruido_dim = 10
+ruido_dim = 32
 salida_dim = 3
-tamano_lote = 64
-epocas = 2000
+tamano_lote = 128
+epocas = 2500
 
 gen_config = {
     'input': ruido_dim,
-    'capas_ocultas': [32, 16, salida_dim],
-    'activaciones': ['relu', 'relu', 'tanh'],
-    'lr': 0.005,
+    'capas_ocultas': [128, 64, salida_dim],
+    'activaciones': ['relu', 'relu', 'lineal'],
+    'lr': 0.001,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }
 
 disc_config = {
     'input': salida_dim,
-    'capas_ocultas': [32, 16, 1],
+    'capas_ocultas': [128, 64, 1],
     'activaciones': ['relu', 'relu', 'sigmoide'],
-    'lr': 0.005,
+    'lr': 0.0008,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }

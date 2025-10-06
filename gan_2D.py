@@ -1,4 +1,5 @@
 # gan_2D.py
+import random
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_moons
@@ -10,23 +11,29 @@ from core.entrenamiento_gan import entrenar_gan
 from core.discriminador import discriminador
 from core.generador import generador
 
+# Semilla global para reproducibilidad de los experimentos 2D
+SEED = 42
+np.random.seed(SEED)
+random.seed(SEED)
+
 # Función para generar datos 2D reales
 def generar_datos_2D(n):
     X, _ = make_moons(n_samples=n, noise=0.1)
     return X
 
 # Parámetros
-ruido_dim = 10
+ruido_dim = 16
 salida_dim = 2
-tamano_lote = 64
-epocas = 1000
+tamano_lote = 128
+epocas = 1500
 
 # Generador
 gen_config = {
     'input': ruido_dim,
-    'capas_ocultas': [32, 16, salida_dim],
-    'activaciones': ['relu', 'relu', 'tanh'],
-    'lr': 0.005,
+    'capas_ocultas': [128, 64, salida_dim],
+    'activaciones': ['relu', 'relu', 'lineal'],
+    'lr': 0.001,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }
@@ -34,9 +41,10 @@ gen_config = {
 # Discriminador
 disc_config = {
     'input': salida_dim,
-    'capas_ocultas': [32, 16, 1],
-    'activaciones': ['relu', 'relu', 'tanh'],
-    'lr': 0.005,
+    'capas_ocultas': [128, 64, 1],
+    'activaciones': ['relu', 'relu', 'sigmoide'],
+    'lr': 0.0008,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }

@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+import random
 # gan_mnist.py
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,33 +8,40 @@ from src.activaciones import mapa_activaciones
 from core.entrenamiento_gan import entrenar_gan
 from core.generador import generador
 
+# Semilla para tener experimentos repetibles
+SEED = 42
+np.random.seed(SEED)
+random.seed(SEED)
+
 # Carga MNIST desde CSV
-def cargar_mnist_csv(path, n=1000):
+def cargar_mnist_csv(path, n=2000):
     data = pd.read_csv(path).values[:n, 1:]  # sin etiqueta
     return data / 255.0
 
 def generar_mnist(n):
-    return cargar_mnist_csv('mnist_train.csv', n)
+    return cargar_mnist_csv('mnist_test.csv', n)
 
-ruido_dim = 100
+ruido_dim = 128
 salida_dim = 784  # 28x28
-tamano_lote = 64
-epocas = 2000
+tamano_lote = 128
+epocas = 1500
 
 gen_config = {
     'input': ruido_dim,
-    'capas_ocultas': [128, 256, salida_dim],
-    'activaciones': ['relu', 'relu', 'sigmoide'],
+    'capas_ocultas': [256, 512, 1024, salida_dim],
+    'activaciones': ['relu', 'relu', 'relu', 'sigmoide'],
     'lr': 0.0002,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }
 
 disc_config = {
     'input': salida_dim,
-    'capas_ocultas': [256, 128, 1],
-    'activaciones': ['relu', 'relu', 'sigmoide'],
-    'lr': 0.0002,
+    'capas_ocultas': [1024, 512, 256, 1],
+    'activaciones': ['relu', 'relu', 'relu', 'sigmoide'],
+    'lr': 0.0004,
+    'beta1': 0.5,
     'optimizador': 'adam',
     'tamano_lote': tamano_lote
 }
